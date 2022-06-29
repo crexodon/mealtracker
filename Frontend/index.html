@@ -1,0 +1,57 @@
+<html>
+
+<head>
+    <script src="knockout-3.5.1.js"></script>
+    <script type="application/javascript">
+        class OrderViewModel {
+            constructor() {
+                this.orders = ko.observableArray();
+                this.addText = ko.observable();
+                this.loadOrders();
+            }
+
+            async loadOrders() {
+                const result = await fetch('https://api.hallo-mahlzeit.de/v1/orders');
+                const orders = await result.json();
+                this.orders(orders);
+            }
+
+            async putOrder(order) {
+                await fetch('https://api.hallo-mahlzeit.de/v1/order', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                });
+            }
+
+            async add() {
+                let order = {
+                    "description": this.addText()
+                };
+
+                await this.putOrder(order);
+                await this.loadOrders();
+            }
+        }
+
+        window.addEventListener('load', function () {
+            ko.applyBindings(new OrderViewModel(), document.getElementById('orderView'));
+        });
+    </script>
+</head>
+
+<body>
+    <form id="orderView">
+        Order <input type="text" data-bind="textInput: addText" /><button data-bind="click: add"
+            type="submit">Add</button>
+        <div>
+            <ul data-bind="foreach: orders">
+                <li data-bind="text: description"></li>
+            </ul>
+        </div>
+    </form>
+</body>
+
+</html>
