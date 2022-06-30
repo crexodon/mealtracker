@@ -1,34 +1,32 @@
 import logging
-from turtle import window_height
-import uuid
 
 import azure.functions as func
 
 
 def main(req: func.HttpRequest, doc:func.Out[func.Document]) -> func.HttpResponse:
-    logging.info('Mahlzeit Order Request')
+    logging.info('Mahlzeit Customer Put Id Request')
 
-    # order id
+    # customer id
     id = req.route_params.get('id')
-    description = ""
+    name = ""
 
 
     
-    # get description from json body
+    # get name from json body
     if req.get_json():
         try:
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            description = req_body.get('description')
+            name = req_body.get('name')
 
     # when id then write into DB
     if id:
         new_docs = func.DocumentList() 
         newproduct_dict = {
             "id": id,
-            "description": description
+            "name": name
         }
         new_docs.append(func.Document.from_dict(newproduct_dict))
         doc.set(new_docs)

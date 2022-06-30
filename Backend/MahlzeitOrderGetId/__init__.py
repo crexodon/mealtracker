@@ -1,20 +1,25 @@
 import logging
 import json
+
 import azure.functions as func
 
 
 def main(req: func.HttpRequest, doc: func.DocumentList) -> func.HttpResponse:
-    logging.info('Mahlzeit Order Get Request')
-    
+    logging.info('Mahlzeit Order Get Id Request')
+
+    id = req.route_params.get('id')
     orders_json = []
 
     for order in doc:
-        logging.info(order['id'])
-        order_json = {
+        if(order['id'] == id):
+            order_json = {
            "id": order['id'],
            "description": order['description']
-        }
-        orders_json.append(order_json)
+            }
+            orders_json.append(order_json)
+        else:
+            return func.HttpResponse(status_code=404)
+        
 
     return func.HttpResponse(
             json.dumps(orders_json),

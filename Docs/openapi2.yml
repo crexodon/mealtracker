@@ -6,13 +6,12 @@ info:
   version: '2.0'
 
 servers:
-  - url: https://api.hallo-mahlzeit.de/v2
-  - url: http://localhost:8081/v2
+  - url: https://hallo-mahlzeit.de/api/
+  - url: http://localhost:7071/api
 
 tags:
   - name: Customer
   - name: Order
-  - name: Canteen
 
 paths:
   /customer:
@@ -73,37 +72,11 @@ paths:
         '400':
           description: Invalid Customer ID
 
-    delete:
-      tags:
-        - 'Customer'
-      operationId: deleteCustomerByID
-      parameters:
-        - name: id
-          in: path
-          description: ID of customer
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Deletes a customer
-        '404': 
-          description: Customer not found
-
   /order:
     get:
       tags:
         - 'Order'
       operationId: getOrderList
-      parameters:
-        - name: id
-          in: path
-          description: ID of customer
-          required: true
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           description: Lists all Orders of a customer
@@ -175,63 +148,6 @@ paths:
         '400':
           description: Order ID invalid
 
-    delete:
-      tags:
-        - 'Order'
-      operationId: deleteOrderByID
-      parameters:
-        - name: id
-          in: path
-          description: ID of order
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: customerId
-          in: query
-          description: ID of customer
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Deletes a order of a customer
-        '404':
-          description: Order not found
-  
-  /canteen:
-    get:
-      tags:
-        - 'Canteen'
-      operationId: getCanteen
-      responses:
-        '200':
-          description: Lists all Canteen
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Canteen'
-
-    put:
-      tags:
-        - 'Canteen'
-      operationId: putCanteen
-      parameters:
-        - name: id
-          in: header
-          description: List of Canteen
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/Canteen'
-      responses:
-        '200':
-          description: Canteen have been added
-
 components:
   schemas:
     Customer:
@@ -256,36 +172,6 @@ components:
           type: integer
           format: int64
           example: 42
-        weight:
-          type: integer
-          format: int64
-          example: 300
-        price:
-          type: number
-          format: double
-          example: 3.99
-        time:
-          type: string
-          format: date-time
         description: 
           type: string
           example: "Steak with Fries"
-
-    Canteen:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 01
-        location:
-          type: string
-          example: 
-        openHours:
-          type: string
-          format: time-hour
-          example: 10
-        closeHours:
-          type: string
-          format: time-hour
-          example: 14
