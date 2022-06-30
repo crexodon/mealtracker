@@ -1,4 +1,5 @@
 import logging
+from turtle import window_height
 import uuid
 
 import azure.functions as func
@@ -7,30 +8,31 @@ import azure.functions as func
 def main(req: func.HttpRequest, doc:func.Out[func.Document]) -> func.HttpResponse:
     logging.info('Mahlzeit Order Request')
 
-    # If api was pr
-    name = req.params.get('name')
-    
+    # order id
+    id = req.route_params.get('id')
+    description = ""
 
-    if not name:
+
+    
+    # get description from json body
+    if req.get_json():
         try:
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            name = req_body.get('name')
+            description = req_body.get('description')
 
-    if name:
-        newdocs = func.DocumentList() 
+    # when id then write into DB
+    if id:
+        new_docs = func.DocumentList() 
         newproduct_dict = {
-            "id": str(uuid.uuid4()),
-            "name": name
+            "id": id,
+            "description": description
         }
-        newdocs.append(func.Document.from_dict(newproduct_dict))
-        doc.set(newdocs)
+        new_docs.append(func.Document.from_dict(newproduct_dict))
+        doc.set(new_docs)
 
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+        return func.HttpResponse(status_code=200)
     else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
+        return func.HttpResponse(status_code=400)

@@ -11,13 +11,13 @@
             }
 
             async loadOrders() {
-                const result = await fetch('https://api.hallo-mahlzeit.de/v1/orders');
+                const result = await fetch('http://localhost:7071/api/order');
                 const orders = await result.json();
                 this.orders(orders);
             }
 
             async putOrder(order) {
-                await fetch('https://api.hallo-mahlzeit.de/v1/order', {
+                await fetch('http://localhost:7071/api/order/1', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
