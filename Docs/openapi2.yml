@@ -64,6 +64,13 @@ paths:
           description: ID of customer
           required: true
           schema:
+            type: integer
+            format: int64
+        - name: name
+          in: header
+          description: Order object
+          required: true
+          schema:
             type: object
             $ref: '#/components/schemas/Customer'
       responses:
@@ -157,7 +164,7 @@ components:
           type: integer
           format: int64
           example: 341321
-        Name:
+        name:
           type: string
           example: Bob
 

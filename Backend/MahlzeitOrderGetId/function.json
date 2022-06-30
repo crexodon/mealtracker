@@ -13,7 +13,7 @@
     },
     {
       "type": "cosmosDB",
-      "direction": "out",
+      "direction": "in",
       "name": "doc",
       "databaseName": "hallomahlzeit-db",
       "collectionName": "hallomahlzeit-order",

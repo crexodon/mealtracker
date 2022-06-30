@@ -1,23 +1,32 @@
 <html>
-
 <head>
     <script src="knockout-3.5.1.js"></script>
     <script type="application/javascript">
         class OrderViewModel {
             constructor() {
                 this.orders = ko.observableArray();
+                this.students = ko.observableArray();
+                this.addMaNu = ko.observable();
+                this.addName = ko.observable();
+                this.addOrNu = ko.observable();
                 this.addText = ko.observable();
                 this.loadOrders();
             }
 
             async loadOrders() {
-                const result = await fetch('http://localhost:7071/api/order');
+                const result = await fetch('https://hallomahlzeit.azurewebsites.net/api/order/');
                 const orders = await result.json();
                 this.orders(orders);
             }
 
+            async loadStudents(){
+                const result = await fetch('https://hallomahlzeit.azurewebsites.net/api/customer/');
+                const students = await result.json();
+                this.students(students);
+            }
+
             async putOrder(order) {
-                await fetch('http://localhost:7071/api/order/1', {
+                await fetch('https://hallomahlzeit.azurewebsites.net/api/order/'  + this.addOrNu(), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -26,12 +35,31 @@
                 });
             }
 
-            async add() {
+            async putStudent(student) {
+                await fetch('https://hallomahlzeit.azurewebsites.net/api/customer/'  + this.addMaNu(), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(student)
+                });
+            }
+
+            async addOrder() {
                 let order = {
                     "description": this.addText()
                 };
 
                 await this.putOrder(order);
+                await this.loadOrders();
+            }
+
+            async addStudent() {
+                let student = {
+                    "name": this.addName()
+                };
+
+                await this.putStudent(student);
                 await this.loadOrders();
             }
         }
@@ -43,15 +71,27 @@
 </head>
 
 <body>
+    <h2>Hallo-Mahlzeit.de</h2>
     <form id="orderView">
-        Order <input type="text" data-bind="textInput: addText" /><button data-bind="click: add"
+        Studentnumber <input type="text" data-bind="textInput: addMaNu" /> Name <input type="text" data-bind="textInput: addName" /><button data-bind="click: addStudent"
+        type="submit">Add</button>
+        <div>
+            <ul data-bind="foreach: students">
+                <li data-bind="text: id"></li>
+                <li data-bind="text: name"></li>
+            </ul>
+        </div>
+
+        <br>
+         
+        Ordernumber <input type="text" data-bind="textInput: addOrNu" /> Description <input type="text" data-bind="textInput: addText" /><button data-bind="click: addOrder"
             type="submit">Add</button>
         <div>
             <ul data-bind="foreach: orders">
+                <li data-bind="text: id"></li>
                 <li data-bind="text: description"></li>
             </ul>
         </div>
     </form>
 </body>
-
 </html>
